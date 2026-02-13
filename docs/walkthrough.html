@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sovereign AI - Setup Walkthrough</title>
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --surface2: #1a1a2e;
+            --border: #2a2a3e;
+            --text: #e0e0e8;
+            --text-dim: #8888a0;
+            --accent: #7c5cff;
+            --accent2: #5ce0d8;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --code-bg: #0d0d14;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 0;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a1a2e 100%);
+            padding: 80px 40px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .specs {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+
+        .spec-badge {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            color: var(--accent2);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px;
+        }
+
+        .step {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .step-number {
+            position: absolute;
+            top: -14px;
+            left: 24px;
+            background: var(--accent);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .step h2 {
+            font-size: 1.4rem;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+
+        .step p {
+            color: var(--text-dim);
+            margin-bottom: 16px;
+        }
+
+        pre {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px 20px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        pre .comment { color: #6a6a8a; }
+        pre .cmd { color: var(--accent2); }
+        pre .flag { color: var(--warning); }
+        pre .string { color: var(--success); }
+
+        .copy-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--text-dim);
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+        }
+
+        .copy-btn:hover { background: var(--accent); color: white; }
+
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+
+        .model-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .model-card h3 {
+            font-size: 1rem;
+            color: var(--accent2);
+            margin-bottom: 4px;
+        }
+
+        .model-card .size {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+        }
+
+        .model-card .role {
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+
+        .tag {
+            display: inline-block;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 2px 8px;
+            font-size: 0.75rem;
+            margin-right: 4px;
+        }
+
+        .tag.primary { border-color: var(--accent); color: var(--accent); }
+        .tag.fast { border-color: var(--success); color: var(--success); }
+        .tag.embed { border-color: var(--warning); color: var(--warning); }
+
+        .architecture {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            line-height: 1.8;
+            overflow-x: auto;
+            margin: 16px 0;
+            white-space: pre;
+        }
+
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+
+        .checklist li {
+            padding: 8px 0;
+            padding-left: 28px;
+            position: relative;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .checklist li:last-child { border-bottom: none; }
+
+        .checklist li::before {
+            content: '○';
+            position: absolute;
+            left: 0;
+            color: var(--text-dim);
+            font-size: 1.1rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin: 48px 0 24px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--accent);
+            color: var(--text);
+        }
+
+        .tip {
+            background: rgba(124, 92, 255, 0.1);
+            border-left: 3px solid var(--accent);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin: 12px 0;
+            font-size: 0.9rem;
+        }
+
+        .warn {
+            background: rgba(251, 191, 36, 0.1);
+            border-left: 3px solid var(--warning);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin: 12px 0;
+            font-size: 0.9rem;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            background: var(--surface2);
+            text-align: left;
+            padding: 10px 14px;
+            border-bottom: 2px solid var(--accent);
+            color: var(--accent2);
+            font-weight: 600;
+        }
+
+        td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        a:hover { text-decoration: underline; }
+
+        .footer {
+            text-align: center;
+            padding: 48px 24px;
+            color: var(--text-dim);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            margin-top: 48px;
+        }
+
+        @media (max-width: 600px) {
+            .hero { padding: 48px 20px; }
+            .hero h1 { font-size: 2rem; }
+            .step { padding: 20px; }
+            .model-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>Sovereign AI</h1>
+    <p>Your private, local AI workstation. No cloud dependency. No data leaving your machine. Full agentic capabilities.</p>
+    <div class="specs">
+        <span class="spec-badge">GTX 1070 8GB</span>
+        <span class="spec-badge">i7-7700</span>
+        <span class="spec-badge">16GB RAM</span>
+        <span class="spec-badge">Ubuntu 24.04</span>
+    </div>
+</div>
+
+<div class="container">
+
+    <h2 class="section-title">Models</h2>
+
+    <div class="model-grid">
+        <div class="model-card">
+            <h3>deepseek-r1:8b</h3>
+            <div class="size">5.2 GB download &middot; ~6.1 GB VRAM</div>
+            <div class="role">Chain-of-thought reasoning, research, document analysis, RAG queries</div>
+            <div style="margin-top: 8px;">
+                <span class="tag primary">primary</span>
+                <span class="tag">reasoning</span>
+            </div>
+        </div>
+        <div class="model-card">
+            <h3>qwen3:8b</h3>
+            <div class="size">5.2 GB download &middot; ~6.1 GB VRAM</div>
+            <div class="role">Coding, tool calling, agentic workflows, instruction following</div>
+            <div style="margin-top: 8px;">
+                <span class="tag primary">primary</span>
+                <span class="tag">coding</span>
+            </div>
+        </div>
+        <div class="model-card">
+            <h3>qwen2.5-coder:1.5b</h3>
+            <div class="size">1 GB download &middot; ~1.2 GB VRAM</div>
+            <div class="role">VS Code tab autocomplete. Runs alongside 8B models.</div>
+            <div style="margin-top: 8px;">
+                <span class="tag fast">fast</span>
+                <span class="tag">autocomplete</span>
+            </div>
+        </div>
+        <div class="model-card">
+            <h3>nomic-embed-text:v1.5</h3>
+            <div class="size">300 MB download &middot; CPU only</div>
+            <div class="role">Embeddings for RAG knowledge base. No VRAM needed.</div>
+            <div style="margin-top: 8px;">
+                <span class="tag embed">embeddings</span>
+                <span class="tag">RAG</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="warn">
+        <strong>8GB VRAM budget:</strong> Only one 8B model loads at a time. Ollama auto-swaps them in ~2 seconds. The 1.5B autocomplete model can run alongside.
+    </div>
+
+    <h2 class="section-title">Setup Walkthrough</h2>
+
+    <div class="step">
+        <div class="step-number">1</div>
+        <h2>System Configuration</h2>
+        <p>Enables zswap (compressed RAM cache), expands swap to 8GB, and configures Ollama with performance optimizations for your GTX 1070.</p>
+        <pre><code><span class="cmd">sudo bash</span> ~/sovereign-ai/scripts/system-setup.sh</code></pre>
+        <div class="tip">
+            <strong>What this does:</strong> Enables zswap with lz4 compression (35% of RAM as compressed cache), expands swap from 4GB to 8GB, sets swappiness to 10, configures Ollama with q8_0 KV cache quantization (halves context memory) and flash attention.
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-number">2</div>
+        <h2>Download Models</h2>
+        <p>Pulls the optimal model set. Removes old/weak models first. Total download: ~12 GB.</p>
+        <pre><code><span class="cmd">bash</span> ~/sovereign-ai/scripts/pull-models.sh</code></pre>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Setting</th><th>Value</th><th>Effect</th></tr>
+                <tr><td>KV Cache Type</td><td>q8_0</td><td>Halves VRAM for context window</td></tr>
+                <tr><td>Flash Attention</td><td>On</td><td>Faster inference</td></tr>
+                <tr><td>Keep Alive</td><td>5 min</td><td>Auto-unloads idle models</td></tr>
+                <tr><td>Max Loaded</td><td>1</td><td>Prevents VRAM overflow</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-number">3</div>
+        <h2>Start the Stack</h2>
+        <p>Launches OpenWebUI (chat interface) and MCPO (MCP tool proxy) via Docker, and verifies Ollama is running.</p>
+        <pre><code><span class="cmd">~/sovereign-ai/start.sh</span></code></pre>
+        <p>Then open <a href="http://localhost:3000" target="_blank">http://localhost:3000</a></p>
+    </div>
+
+    <div class="step">
+        <div class="step-number">4</div>
+        <h2>Configure OpenWebUI</h2>
+        <p>First-time setup in the browser:</p>
+        <ul class="checklist">
+            <li>Create your local account at <a href="http://localhost:3000">localhost:3000</a></li>
+            <li>Go to <strong>Admin Settings &gt; Connections</strong> &mdash; verify Ollama URL is <code>http://host.docker.internal:11434</code></li>
+            <li>Go to <strong>Admin Settings &gt; Documents</strong> &mdash; set embedding model to <code>nomic-embed-text:v1.5</code></li>
+            <li>Go to <strong>Admin Settings &gt; External Tools</strong> &mdash; add MCP endpoint: <code>http://mcpo:8000</code></li>
+            <li>Go to <strong>Workspace &gt; Knowledge</strong> &mdash; create collections for your documents</li>
+            <li>Install community tools (see <a href="#tools">Tools section</a>)</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <div class="step-number">5</div>
+        <h2>VS Code Setup (Continue.dev)</h2>
+        <p>Get AI coding assistance with local models:</p>
+        <pre><code><span class="cmd">bash</span> ~/sovereign-ai/scripts/install-continue.sh</code></pre>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Feature</th><th>Shortcut</th><th>Model</th></tr>
+                <tr><td>Tab autocomplete</td><td>Just type</td><td>Qwen2.5-Coder 1.5B</td></tr>
+                <tr><td>Chat</td><td>Ctrl+L</td><td>DeepSeek-R1 / Qwen3</td></tr>
+                <tr><td>Inline edit</td><td>Ctrl+I</td><td>Selected model</td></tr>
+                <tr><td>Reference project</td><td>@workspace</td><td>Any model</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-number">6</div>
+        <h2>Add Free Cloud APIs (Optional)</h2>
+        <p>For tasks beyond what local 8B models can handle, add free cloud providers:</p>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Provider</th><th>Free Tier</th><th>Best For</th></tr>
+                <tr><td><a href="https://console.groq.com" target="_blank">Groq</a></td><td>14,400 req/day</td><td>Fast inference, 70B models</td></tr>
+                <tr><td><a href="https://aistudio.google.com" target="_blank">Google AI Studio</a></td><td>250K tok/min</td><td>Long documents (Gemini)</td></tr>
+                <tr><td><a href="https://console.mistral.ai" target="_blank">Mistral</a></td><td>1B tok/month</td><td>Coding (Codestral)</td></tr>
+            </table>
+        </div>
+        <p>In OpenWebUI: <strong>Admin Settings &gt; Connections &gt; + Add Connection</strong> &mdash; use OpenAI-compatible API format. See <code>configs/free-cloud-apis.md</code> for full setup instructions.</p>
+    </div>
+
+    <h2 class="section-title" id="tools">MCP &amp; Tools</h2>
+
+    <div class="step">
+        <h2>Agentic Capabilities via MCP</h2>
+        <p>The MCPO proxy exposes these tools to your models automatically:</p>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Tool</th><th>Capability</th></tr>
+                <tr><td>Filesystem</td><td>Read, write, search files in /home/wess</td></tr>
+                <tr><td>Memory</td><td>Persistent key-value store across sessions</td></tr>
+                <tr><td>Time</td><td>Current time, timezone operations</td></tr>
+            </table>
+        </div>
+        <p>Add more MCP servers by editing <code>configs/mcpo-config.json</code> and running <code>docker compose restart mcpo</code>.</p>
+        <p>Browse 1,200+ MCP servers at <a href="https://mcpservers.org" target="_blank">mcpservers.org</a></p>
+    </div>
+
+    <div class="step">
+        <h2>OpenWebUI Community Tools</h2>
+        <p>Install these in <strong>Workspace &gt; Tools &gt; + Create Tool</strong>:</p>
+        <div class="table-wrap">
+            <table>
+                <tr><th>Tool</th><th>What It Does</th></tr>
+                <tr><td><a href="https://openwebui.com/t/hub/code_execution" target="_blank">Code Execution v2</a></td><td>Run Python + shell from chat</td></tr>
+                <tr><td><a href="https://openwebui.com/t/hub/visuals" target="_blank">Visuals Toolkit</a></td><td>Charts, diagrams, flowcharts</td></tr>
+                <tr><td><a href="https://openwebui.com/t/hub/document_generator" target="_blank">Document Generator</a></td><td>Export .docx / .xlsx / .pptx</td></tr>
+            </table>
+        </div>
+        <p>Browse all tools: <a href="https://openwebui.com/tools" target="_blank">openwebui.com/tools</a></p>
+    </div>
+
+    <h2 class="section-title">RAG Knowledge Base</h2>
+
+    <div class="step">
+        <h2>Building Your Knowledge</h2>
+        <p>This is how your AI learns and refers to your documents:</p>
+        <ul class="checklist">
+            <li>Drop PDFs, markdown, or text files into <code>~/sovereign-ai/data/rag-docs/</code></li>
+            <li>In OpenWebUI &gt; <strong>Workspace &gt; Knowledge</strong>, create a collection</li>
+            <li>Upload files to the collection</li>
+            <li>In chat, click the <strong>#</strong> icon to attach a knowledge collection</li>
+            <li>The model searches your documents and includes relevant chunks in its context</li>
+        </ul>
+        <div class="tip">
+            <strong>For textbooks:</strong> Create separate collections per subject. Use DeepSeek-R1 for analysis&mdash;its chain-of-thought reasoning is excellent for understanding complex material.
+        </div>
+    </div>
+
+    <h2 class="section-title">Daily Usage</h2>
+
+    <div class="table-wrap">
+        <table>
+            <tr><th>Task</th><th>Model</th><th>Where</th></tr>
+            <tr><td>Research / complex questions</td><td>deepseek-r1:8b</td><td>OpenWebUI</td></tr>
+            <tr><td>Read &amp; analyze documents</td><td>deepseek-r1:8b + RAG</td><td>OpenWebUI</td></tr>
+            <tr><td>Write code</td><td>qwen3:8b</td><td>OpenWebUI or Continue.dev</td></tr>
+            <tr><td>Debug code</td><td>qwen3:8b</td><td>Continue.dev (Ctrl+L)</td></tr>
+            <tr><td>Tab autocomplete</td><td>qwen2.5-coder:1.5b</td><td>Continue.dev (just type)</td></tr>
+            <tr><td>Heavy reasoning</td><td>Groq (free)</td><td>OpenWebUI (cloud model)</td></tr>
+            <tr><td>Long documents</td><td>Gemini Flash (free)</td><td>OpenWebUI (cloud model)</td></tr>
+        </table>
+    </div>
+
+    <h2 class="section-title">Management Commands</h2>
+
+    <pre><code><span class="comment"># Start everything</span>
+<span class="cmd">~/sovereign-ai/start.sh</span>
+
+<span class="comment"># Check status dashboard</span>
+<span class="cmd">~/sovereign-ai/status.sh</span>
+
+<span class="comment"># Stop Docker services (Ollama keeps running)</span>
+<span class="cmd">~/sovereign-ai/stop.sh</span>
+
+<span class="comment"># Stop absolutely everything</span>
+<span class="cmd">~/sovereign-ai/stop.sh --all</span>
+
+<span class="comment"># Update all components</span>
+<span class="cmd">~/sovereign-ai/scripts/update.sh</span>
+
+<span class="comment"># Check GPU usage</span>
+<span class="cmd">nvidia-smi</span>
+
+<span class="comment"># View OpenWebUI logs</span>
+<span class="cmd">docker compose -f ~/sovereign-ai/docker-compose.yml logs -f open-webui</span>
+</code></pre>
+
+</div>
+
+<div class="footer">
+    <p>Sovereign AI &middot; Built for privacy, speed, and knowledge &middot; 2026</p>
+    <p>GTX 1070 (8GB) &middot; i7-7700 &middot; 16GB RAM &middot; Ubuntu 24.04</p>
+</div>
+
+<script>
+    // Copy button functionality
+    document.querySelectorAll('pre').forEach(pre => {
+        const btn = document.createElement('button');
+        btn.className = 'copy-btn';
+        btn.textContent = 'Copy';
+        btn.addEventListener('click', () => {
+            const text = pre.querySelector('code')?.textContent || pre.textContent;
+            navigator.clipboard.writeText(text.trim());
+            btn.textContent = 'Copied!';
+            setTimeout(() => btn.textContent = 'Copy', 1500);
+        });
+        pre.appendChild(btn);
+    });
+</script>
+
+</body>
+</html>

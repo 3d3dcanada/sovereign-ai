@@ -1,0 +1,87 @@
+# Sovereign AI - Docker Stack
+# OpenWebUI + MCPO (MCP-to-OpenAPI proxy) + Open Notebook
+#
+# Usage:
+#   docker compose up -d
+#   docker compose down
+#   docker compose logs -f open-webui
+
+services:
+  # ──────────────────────────────────────
+  # OPEN WEBUI — Main AI Interface
+  # ──────────────────────────────────────
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: open-webui
+    restart: unless-stopped
+    ports:
+      - "3000:8080"
+    volumes:
+      - open-webui-data:/app/backend/data
+    environment:
+      # Connect to host Ollama
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      # Performance
+      - ENV=prod
+      - USE_OLLAMA_DOCKER=false
+      # RAG Configuration
+      - RAG_EMBEDDING_ENGINE=ollama
+      - RAG_EMBEDDING_MODEL=nomic-embed-text:v1.5
+      - CHUNK_SIZE=512
+      - CHUNK_OVERLAP=100
+      # Enable web search (optional, uses DuckDuckGo by default)
+      - ENABLE_RAG_WEB_SEARCH=true
+      - RAG_WEB_SEARCH_ENGINE=duckduckgo
+      # Enable community tools
+      - ENABLE_COMMUNITY_SHARING=true
+      # Enable code execution sandbox
+      - ENABLE_CODE_EXECUTION=true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ──────────────────────────────────────
+  # MCPO — MCP-to-OpenAPI Proxy
+  # Exposes local MCP servers to OpenWebUI
+  # ──────────────────────────────────────
+  mcpo:
+    image: ghcr.io/open-webui/mcpo:latest
+    container_name: mcpo
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./configs/mcpo-config.json:/app/config.json:ro
+      - /home/wess:/home/wess:rw
+    command: --config /app/config.json --port 8000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  # ──────────────────────────────────────
+  # OPEN NOTEBOOK — AI-Powered Research Notebook
+  # Organize projects, PDFs, notes with AI analysis
+  # Single container (includes SurrealDB)
+  # ──────────────────────────────────────
+  open-notebook:
+    image: lfnovo/open_notebook:v1-latest-single
+    container_name: open-notebook
+    restart: unless-stopped
+    ports:
+      - "8502:8502"   # Web UI
+      - "5055:5055"   # REST API
+    env_file:
+      - ./configs/notebook.env
+    volumes:
+      - ./data/notebook:/app/data
+      - ./data/notebook-db:/mydata
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  open-webui-data:
+    name: sovereign-ai-webui-data

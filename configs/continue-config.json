@@ -1,0 +1,33 @@
+{
+  "$schema": "https://continue.dev/config-schema.json",
+  "models": [
+    {
+      "title": "DeepSeek-R1 8B (Reasoning)",
+      "model": "deepseek-r1:8b",
+      "provider": "ollama",
+      "apiBase": "http://localhost:11434",
+      "contextLength": 16384
+    },
+    {
+      "title": "Qwen3 8B (Coding)",
+      "model": "qwen3:8b",
+      "provider": "ollama",
+      "apiBase": "http://localhost:11434",
+      "contextLength": 16384,
+      "roles": ["chat"]
+    }
+  ],
+  "tabAutocompleteModel": {
+    "title": "Qwen2.5-Coder 1.5B",
+    "model": "qwen2.5-coder:1.5b",
+    "provider": "ollama",
+    "apiBase": "http://localhost:11434"
+  },
+  "embeddingsProvider": {
+    "provider": "ollama",
+    "model": "nomic-embed-text:v1.5",
+    "apiBase": "http://localhost:11434"
+  },
+  "docs": [],
+  "allowAnonymousTelemetry": false
+}

@@ -1,0 +1,44 @@
+# Sovereign AI .gitignore
+
+# Logs
+logs/
+*.log
+
+# Data volumes (user-specific)
+data/
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Environment files with secrets
+.env
+*.env.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Docker volumes (managed by Docker)
+# Don't track the actual volume data
+
+# Large files
+*.zip
+*.tar.gz
+*.gif
+*.webp
+
+# Keep the project icon
+!sovereign-ai-icon.png
+
+# ComfyUI (installed locally, not tracked)
+comfyui/
+
+# Node
+node_modules/
