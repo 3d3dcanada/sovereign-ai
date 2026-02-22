@@ -1,0 +1,314 @@
+# Sovereign AI - Complete AI Workstation Stack
+# Version: 2.0.0 - February 2026
+# 
+# Services:
+#   - OpenWebUI (Port 3000): Main AI interface
+#   - Ollama (Port 11434): Local LLM inference
+#   - MCPO (Port 8000): MCP OpenAPI Proxy
+#   - Mem0 (Port 8765): Memory service with Qdrant
+#   - Open Notebook (Port 8502): Research notebook
+#   - Qdrant (Port 6333): Vector database
+#   - Redis (Port 6379): Caching layer
+
+networks:
+  sovereign-net:
+    driver: bridge
+
+volumes:
+  ollama-data:
+  openwebui-data:
+  notebook-data:
+  qdrant-data:
+  redis-data:
+  mem0-data:
+
+services:
+  # ============================================
+  # OLLAMA - Local LLM Inference Engine
+  # ============================================
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-data:/root/.ollama
+    environment:
+      - OLLAMA_KEEP_ALIVE=24h
+      - OLLAMA_MAX_LOADED_MODELS=4
+      - OLLAMA_NUM_PARALLEL=1
+      - OLLAMA_MAX_QUEUE=512
+      - OLLAMA_FLASH_ATTENTION=1
+      - OLLAMA_KV_CACHE_TYPE=q8_0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    networks:
+      - sovereign-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ============================================
+  # OPENWEBUI - Main AI Interface
+  # ============================================
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:latest
+    container_name: openwebui
+    restart: unless-stopped
+    ports:
+      - "3000:8080"
+    volumes:
+      - openwebui-data:/app/backend/data
+      - ./data/rag-docs:/app/backend/data/docs
+      - ./tools:/app/backend/data/tools
+      - ./functions:/app/backend/data/functions
+    environment:
+      # Core
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - ENV=prod
+      - WEBUI_SECRET_KEY=${WEBUI_SECRET_KEY:-sovereign-ai-secret-2026}
+      
+      # RAG Configuration
+      - RAG_EMBEDDING_ENGINE=ollama
+      - RAG_EMBEDDING_MODEL=nomic-embed-text:v1.5
+      - RAG_EMBEDDING_BATCH_SIZE=50
+      - CHUNK_SIZE=512
+      - CHUNK_OVERLAP=100
+      
+      # Web Search (Brave)
+      - ENABLE_RAG_WEB_SEARCH=true
+      - RAG_WEB_SEARCH_ENGINE=brave
+      - BRAVE_SEARCH_API_KEY=${BRAVE_API_KEY}
+      - RAG_WEB_SEARCH_RESULT_COUNT=5
+      - RAG_WEB_SEARCH_CONCURRENT_REQUESTS=5
+      
+      # Code Execution
+      - ENABLE_CODE_EXECUTION=true
+      - CODE_EXECUTION_ENGINE=pyodide
+      
+      # Image Generation
+      - ENABLE_IMAGE_GENERATION=true
+      - IMAGE_GENERATION_ENGINE=openai
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - IMAGE_SIZE=1024x1024
+      - IMAGE_STEPS=50
+      
+      # Memory - Connect to Mem0
+      - ENABLE_MEMORY=true
+      
+      # Voice/Audio
+      - AUDIO_STT_ENGINE=whisper
+      - AUDIO_TTS_ENGINE=openai
+      - OPENAI_API_BASE_URL=https://api.openai.com/v1
+      
+      # Features
+      - ENABLE_COMMUNITY_SHARING=true
+      - ENABLE_EVALUATION_ARENA=true
+      - ENABLE_NOTES=true
+      - ENABLE_CHANNELS=true
+      - ENABLE_USER_WEBHOOKS=true
+      
+      # Security
+      - ENABLE_ADMIN_EXPORT=true
+      - ENABLE_ADMIN_CHAT_ACCESS=true
+      - SAFE_MODE=false
+      
+      # External APIs
+      - OPENAI_API_BASE_URLS=${OPENAI_API_BASE_URLS:-}
+      - OPENAI_API_KEYS=${OPENAI_API_KEYS:-}
+      
+    networks:
+      - sovereign-net
+    depends_on:
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+
+  # ============================================
+  # MCPO - MCP OpenAPI Proxy
+  # ============================================
+  mcpo:
+    build:
+      context: .
+      dockerfile: Dockerfile.mcpo
+    container_name: mcpo
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./configs/mcpo-config.json:/app/config.json:ro
+      - ./mcp-servers:/app/mcp-servers:ro
+      - /home/wess:/home/wess:rw
+      - ./data/memory:/app/memory:rw
+      - ./logs/mcpo:/app/logs:rw
+    environment:
+      - NPM_CONFIG_CACHE=/tmp/.npm
+      - UV_CACHE_DIR=/tmp/.uv
+      # API Keys for MCP servers
+      - BRAVE_API_KEY=${BRAVE_API_KEY}
+      - GITHUB_TOKEN=${GITHUB_TOKEN}
+      - GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
+    networks:
+      - sovereign-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ============================================
+  # MEM0 - Memory Service with Qdrant
+  # ============================================
+  mem0:
+    image: mem0/mem0-mcp:latest
+    container_name: mem0
+    restart: unless-stopped
+    ports:
+      - "8765:8765"
+    volumes:
+      - mem0-data:/app/data
+      - ./data/memory:/app/memory:rw
+    environment:
+      - QDRANT_URL=http://qdrant:6333
+      - QDRANT_API_KEY=${QDRANT_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - LLM_PROVIDER=openai
+      - LLM_MODEL=gpt-4o-mini
+      - EMBEDDING_MODEL=text-embedding-3-small
+    networks:
+      - sovereign-net
+    depends_on:
+      qdrant:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8765/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ============================================
+  # OPEN NOTEBOOK - Research Notebook
+  # ============================================
+  open-notebook:
+    image: lfnovo/open-notebook:latest
+    container_name: open-notebook
+    restart: unless-stopped
+    ports:
+      - "8502:8502"
+    volumes:
+      - notebook-data:/app/data
+      - ./data/notebook:/app/notebooks
+      - ./data/notebook-db:/app/chroma_db
+    environment:
+      # LLM Configuration
+      - LLM_PROVIDER=ollama
+      - LLM_MODEL=deepseek-r1:8b
+      - LLM_BASE_URL=http://host.docker.internal:11434
+      
+      # Embedding
+      - EMBEDDING_PROVIDER=ollama
+      - EMBEDDING_MODEL=nomic-embed-text:v1.5
+      - EMBEDDING_BASE_URL=http://host.docker.internal:11434
+      
+      # App Config
+      - APP_ENV=production
+      - SECRET_KEY=${NOTEBOOK_SECRET_KEY:-notebook-secret-2026}
+    networks:
+      - sovereign-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8502/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # ============================================
+  # QDRANT - Vector Database
+  # ============================================
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrant-data:/qdrant/storage
+    environment:
+      - QDRANT_API_KEY=${QDRANT_API_KEY:-}
+    networks:
+      - sovereign-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+
+  # ============================================
+  # REDIS - Caching Layer
+  # ============================================
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes --maxmemory 2gb --maxmemory-policy allkeys-lru
+    networks:
+      - sovereign-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ============================================
+  # SOVEREIGN AGENT - Autonomous Agent
+  # ============================================
+  sovereign-agent:
+    build:
+      context: ./mcp-servers/sovereign-agent
+      dockerfile: Dockerfile
+    container_name: sovereign-agent
+    restart: unless-stopped
+    volumes:
+      - /home/wess:/home/wess:rw
+      - ./data/agent-logs:/app/logs:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - OLLAMA_BASE_URL=http://host.docker.internal:11434
+      - MODEL_NAME=deepseek-r1:8b
+      - LOG_LEVEL=INFO
+      - SAFETY_LEVEL=standard
+      - CONFIRMATION_REQUIRED=true
+      - LOG_DIR=/app/logs
+      - WORK_DIR=/home/wess
+    networks:
+      - sovereign-net
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    profiles:
+      - agent
