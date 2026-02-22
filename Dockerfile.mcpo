@@ -1,0 +1,58 @@
+# MCPO - MCP OpenAPI Proxy with All Servers
+# Version: 2.1.0 - February 2026
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    nodejs \
+    npm \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install uv for fast Python package management
+RUN pip install uv
+
+# Install MCP OpenAPI Proxy
+RUN pip install mcpo
+
+# Pre-install Node.js MCP servers (all packages used in config)
+RUN npm install -g \
+    @modelcontextprotocol/server-filesystem \
+    @modelcontextprotocol/server-memory \
+    @modelcontextprotocol/server-brave-search \
+    @modelcontextprotocol/server-fetch \
+    @modelcontextprotocol/server-puppeteer \
+    @modelcontextprotocol/server-sequential-thinking \
+    @github/mcp-server \
+    @playwright/mcp@latest \
+    @upstash/context7-mcp
+
+# Python-based MCP servers via uv
+RUN uv pip install --system \
+    mcp-server-sqlite \
+    mcp-server-time \
+    mcp \
+    aiohttp
+
+# Install Playwright browsers (Chromium only for size)
+RUN npx playwright install chromium --with-deps || true
+
+# Create required directories
+RUN mkdir -p /app/memory /app/logs /tmp/.npm /tmp/.uv
+
+# Copy config
+COPY configs/mcpo-config.json /app/config.json
+
+# Expose port
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
+  CMD curl -f http://localhost:8000/health || exit 1
+
+# Run MCPO
+CMD ["mcpo", "--config", "/app/config.json", "--host", "0.0.0.0", "--port", "8000"]

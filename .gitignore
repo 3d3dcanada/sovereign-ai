@@ -1,11 +1,14 @@
 # Sovereign AI .gitignore
 
 # Logs
-logs/
-*.log
+logs/*.log
 
-# Data volumes (user-specific)
-data/
+# Data volumes - ignore runtime files but keep directory structure
+data/*.pdf
+data/*.txt
+data/*.md
+data/*.db
+data/*.sqlite
 
 # Python
 __pycache__/

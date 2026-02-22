@@ -2,24 +2,117 @@
   "mcpServers": {
     "filesystem": {
       "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "/home/wess"
-      ]
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/wess"],
+      "env": {}
     },
     "memory": {
       "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-memory"],
+      "env": {}
+    },
+    "knowledge-graph": {
+      "command": "npx",
       "args": [
         "-y",
-        "@modelcontextprotocol/server-memory"
-      ]
+        "@modelcontextprotocol/server-memory",
+        "--memory-path",
+        "/app/memory/knowledge-graph.json"
+      ],
+      "env": {}
     },
     "time": {
       "command": "uvx",
-      "args": [
-        "mcp-server-time"
-      ]
+      "args": ["mcp-server-time"],
+      "env": {}
+    },
+    "fetch": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-fetch"],
+      "env": {}
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "env": {}
+    },
+    "brave-search": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "env": {
+        "BRAVE_API_KEY": "${BRAVE_API_KEY}"
+      }
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@github/mcp-server"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"],
+      "env": {}
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"],
+      "env": {}
+    },
+    "puppeteer": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "env": {}
+    },
+    "sqlite": {
+      "command": "uvx",
+      "args": ["mcp-server-sqlite", "--db-path", "/app/memory/sovereign.db"],
+      "env": {}
+    },
+    "shell-confirm": {
+      "command": "python",
+      "args": ["/app/mcp-servers/shell-confirm/server.py"],
+      "env": {
+        "LOG_DIR": "/app/logs"
+      }
+    },
+    "sovereign-agent": {
+      "command": "python",
+      "args": ["/app/mcp-servers/sovereign-agent/agent.py"],
+      "env": {
+        "LOG_DIR": "/app/logs",
+        "WORK_DIR": "/home/wess"
+      }
+    },
+    "system-monitor": {
+      "command": "python",
+      "args": ["/app/mcp-servers/system-monitor/server.py"],
+      "env": {
+        "LOG_DIR": "/app/logs"
+      }
+    },
+    "api-gateway": {
+      "command": "python",
+      "args": ["/app/mcp-servers/api-gateway/server.py"],
+      "env": {
+        "LOG_DIR": "/app/logs",
+        "BRAVE_API_KEY": "${BRAVE_API_KEY}",
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      }
+    }
+  },
+  "openapi": {
+    "title": "Sovereign AI MCP API",
+    "description": "Model Context Protocol API for Sovereign AI Workstation",
+    "version": "2.1.0"
+  },
+  "server": {
+    "host": "0.0.0.0",
+    "port": 8000,
+    "cors": {
+      "origins": ["*"],
+      "methods": ["*"],
+      "headers": ["*"]
     }
   }
 }
