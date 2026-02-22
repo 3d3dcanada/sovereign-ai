@@ -7,6 +7,7 @@ YELLOW='\033[1;33m'
 CYAN='\033[0;36m'
 BOLD='\033[1m'
 NC='\033[0m'
+DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo -e "${CYAN}${BOLD}========================================${NC}"
 echo -e "${CYAN}${BOLD}  Sovereign AI - Status${NC}"
@@ -30,7 +31,36 @@ check "Ollama"        "http://localhost:11434/api/tags" "11434"
 check "OpenWebUI"     "http://localhost:3000"           "3000"
 check "Open Notebook" "http://localhost:8502"           "8502"
 check "MCP Proxy"     "http://localhost:8000"           "8000"
+check "Mem0"          "http://localhost:8765"           "8765"
+check "Qdrant"        "http://localhost:6333"           "6333"
+check "Redis"         "http://localhost:6379"           "6379"
 check "ComfyUI"       "http://localhost:8188"           "8188"
+echo ""
+
+# Inactivity Monitor
+echo -e "${BOLD}Inactivity Monitor${NC}"
+echo -e "────────────────────────────────────────"
+if [ -f "$DIR/logs/inactivity-monitor.pid" ]; then
+    PID=$(cat "$DIR/logs/inactivity-monitor.pid")
+    if kill -0 "$PID" 2>/dev/null; then
+        if [ -f "$DIR/logs/.last-activity" ]; then
+            LAST=$(cat "$DIR/logs/.last-activity")
+            NOW=$(date +%s)
+            ELAPSED=$((NOW - LAST))
+            REMAINING=$((600 - ELAPSED))
+            MINS=$((REMAINING / 60))
+            SECS=$((REMAINING % 60))
+            echo -e "  ${GREEN}[OK]${NC} Running (PID: $PID)"
+            echo -e "  Auto-shutdown in: ${YELLOW}${MINS}m ${SECS}s${NC}"
+        else
+            echo -e "  ${GREEN}[OK]${NC} Running (PID: $PID)"
+        fi
+    else
+        echo -e "  ${RED}[--]${NC} Not running (stale PID)"
+    fi
+else
+    echo -e "  ${YELLOW}[--]${NC} Not running"
+fi
 echo ""
 
 # GPU

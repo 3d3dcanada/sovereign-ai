@@ -1,6 +1,6 @@
 #!/bin/bash
 # Sovereign AI - Start Stack
-# Launches Ollama (if needed) + Docker services
+# Launches Ollama (if needed) + Docker services + Inactivity Monitor
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -58,7 +58,16 @@ for i in $(seq 1 30); do
     sleep 2
 done
 
-# 5. Status report
+# 5. Start inactivity monitor (auto-shutdown after 10 min)
+echo -e "${YELLOW}[..]${NC} Starting inactivity monitor..."
+"$DIR/scripts/inactivity-monitor.sh" start 2>/dev/null
+if [ $? -eq 0 ]; then
+    echo -e "${GREEN}[OK]${NC} Inactivity monitor started (10 min timeout)"
+else
+    echo -e "${YELLOW}[..]${NC} Inactivity monitor already running"
+fi
+
+# 6. Status report
 echo ""
 echo -e "${CYAN}========================================${NC}"
 echo -e "${CYAN}  Sovereign AI - Online${NC}"
@@ -68,6 +77,8 @@ echo -e "  ${GREEN}OpenWebUI${NC}      http://localhost:3000"
 echo -e "  ${GREEN}Open Notebook${NC}  http://localhost:8502"
 echo -e "  ${GREEN}Ollama API${NC}     http://localhost:11434"
 echo -e "  ${GREEN}MCP Proxy${NC}      http://localhost:8000"
+echo -e "  ${GREEN}Mem0${NC}           http://localhost:8765"
+echo -e "  ${GREEN}Qdrant${NC}         http://localhost:6333"
 
 # Check if ComfyUI is available
 if [ -d "$DIR/comfyui" ]; then
@@ -81,5 +92,6 @@ echo ""
 echo -e "  Models: $(ollama list 2>/dev/null | tail -n +2 | wc -l) installed"
 echo -e "  GPU:    $(nvidia-smi --query-gpu=memory.used,memory.total --format=csv,noheader,nounits 2>/dev/null | awk -F', ' '{printf "%s/%s MB", $1, $2}')"
 echo ""
+echo -e "  ${YELLOW}Auto-shutdown${NC}: After 10 min inactivity"
 echo -e "  Logs:   docker compose -f $DIR/docker-compose.yml logs -f"
 echo ""
