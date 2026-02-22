@@ -1,26 +1,69 @@
 {
-  "$schema": "https://continue.dev/config-schema.json",
+  "$schema": "https://continue.dev/schema/continue-config.json",
   "models": [
     {
-      "title": "DeepSeek-R1 8B (Reasoning)",
-      "model": "deepseek-r1:8b",
+      "title": "DeepSeek R1 8B (Local)",
       "provider": "ollama",
-      "apiBase": "http://localhost:11434",
-      "contextLength": 16384
+      "model": "deepseek-r1:8b",
+      "apiBase": "http://localhost:11434"
     },
     {
-      "title": "Qwen3 8B (Coding)",
-      "model": "qwen3:8b",
+      "title": "Qwen 3 8B (Local)",
       "provider": "ollama",
-      "apiBase": "http://localhost:11434",
-      "contextLength": 16384,
-      "roles": ["chat"]
+      "model": "qwen3:8b",
+      "apiBase": "http://localhost:11434"
+    },
+    {
+      "title": "Llama 3.2 (Local)",
+      "provider": "ollama",
+      "model": "llama3.2:latest",
+      "apiBase": "http://localhost:11434"
+    },
+    {
+      "title": "DeepSeek R1 (NVIDIA)",
+      "provider": "openai",
+      "model": "deepseek-ai/deepseek-r1",
+      "apiBase": "https://integrate.api.nvidia.com/v1",
+      "apiKey": "${NVIDIA_API_KEY}"
+    },
+    {
+      "title": "Llama 3.3 70B (Groq)",
+      "provider": "openai",
+      "model": "llama-3.3-70b-versatile",
+      "apiBase": "https://api.groq.com/openai/v1",
+      "apiKey": "${GROQ_API_KEY}"
+    },
+    {
+      "title": "Gemini 2.5 Flash",
+      "provider": "openai",
+      "model": "gemini-2.5-flash",
+      "apiBase": "https://generativelanguage.googleapis.com/v1beta/openai",
+      "apiKey": "${GOOGLE_API_KEY}"
+    },
+    {
+      "title": "Claude Sonnet 4",
+      "provider": "anthropic",
+      "model": "claude-sonnet-4-20250514",
+      "apiKey": "${ANTHROPIC_API_KEY}"
+    },
+    {
+      "title": "GPT-4o",
+      "provider": "openai",
+      "model": "gpt-4o",
+      "apiKey": "${OPENAI_API_KEY}"
+    },
+    {
+      "title": "Codestral (Mistral)",
+      "provider": "openai",
+      "model": "codestral-latest",
+      "apiBase": "https://api.mistral.ai/v1",
+      "apiKey": "${MISTRAL_API_KEY}"
     }
   ],
   "tabAutocompleteModel": {
-    "title": "Qwen2.5-Coder 1.5B",
-    "model": "qwen2.5-coder:1.5b",
+    "title": "Qwen Coder 1.5B",
     "provider": "ollama",
+    "model": "qwen2.5-coder:1.5b",
     "apiBase": "http://localhost:11434"
   },
   "embeddingsProvider": {
@@ -28,6 +71,194 @@
     "model": "nomic-embed-text:v1.5",
     "apiBase": "http://localhost:11434"
   },
-  "docs": [],
-  "allowAnonymousTelemetry": false
+  "reranker": {
+    "name": "cohere",
+    "params": {
+      "model": "rerank-english-v3.0",
+      "apiBase": "https://api.cohere.ai/v1",
+      "apiKey": "${COHERE_API_KEY}"
+    }
+  },
+  "contextProviders": [
+    {
+      "name": "code",
+      "params": {}
+    },
+    {
+      "name": "docs",
+      "params": {}
+    },
+    {
+      "name": "diff",
+      "params": {}
+    },
+    {
+      "name": "terminal",
+      "params": {}
+    },
+    {
+      "name": "problems",
+      "params": {}
+    },
+    {
+      "name": "folder",
+      "params": {}
+    },
+    {
+      "name": "codebase",
+      "params": {}
+    },
+    {
+      "name": "search",
+      "params": {}
+    },
+    {
+      "name": "url",
+      "params": {}
+    },
+    {
+      "name": "database",
+      "params": {}
+    }
+  ],
+  "slashCommands": [
+    {
+      "name": "edit",
+      "description": "Edit selected code"
+    },
+    {
+      "name": "comment",
+      "description": "Write comments for the selected code"
+    },
+    {
+      "name": "share",
+      "description": "Export the current chat session to markdown"
+    },
+    {
+      "name": "cmd",
+      "description": "Generate a shell command"
+    },
+    {
+      "name": "commit",
+      "description": "Generate a git commit message"
+    },
+    {
+      "name": "review",
+      "description": "Review the selected code for improvements"
+    },
+    {
+      "name": "test",
+      "description": "Generate unit tests for the selected code"
+    },
+    {
+      "name": "refactor",
+      "description": "Refactor the selected code"
+    },
+    {
+      "name": "explain",
+      "description": "Explain the selected code"
+    },
+    {
+      "name": "fix",
+      "description": "Fix errors in the selected code"
+    }
+  ],
+  "customCommands": [
+    {
+      "name": "sovereign",
+      "prompt": "You are Sovereign AI, a powerful local AI assistant with full system access. Help the user with their request using all available tools and context. Be thorough, accurate, and helpful.",
+      "description": "Activate Sovereign AI mode"
+    },
+    {
+      "name": "agent",
+      "prompt": "You are an autonomous AI agent. Break down the user's request into steps, plan your approach, and execute each step systematically. Use tools when needed. Report progress and results clearly.",
+      "description": "Activate autonomous agent mode"
+    },
+    {
+      "name": "research",
+      "prompt": "You are a research assistant. Search for information, analyze sources, and provide comprehensive summaries with citations. Use web search and document analysis tools.",
+      "description": "Activate research mode"
+    }
+  ],
+  "data": [
+    {
+      "type": "docs",
+      "name": "Sovereign AI Docs",
+      "startUrl": "file:///home/wess/sovereign-ai/docs",
+      "depth": 3
+    }
+  ],
+  "mcpServers": [
+    {
+      "name": "filesystem",
+      "transport": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/wess"]
+      }
+    },
+    {
+      "name": "brave-search",
+      "transport": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-brave-search"]
+      },
+      "env": {
+        "BRAVE_API_KEY": "${BRAVE_API_KEY}"
+      }
+    },
+    {
+      "name": "github",
+      "transport": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@github/mcp-server"]
+      },
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      }
+    },
+    {
+      "name": "playwright",
+      "transport": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@playwright/mcp@latest"]
+      }
+    },
+    {
+      "name": "sequential-thinking",
+      "transport": {
+        "type": "stdio",
+        "command": "npx",
+        "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"]
+      }
+    }
+  ],
+  "experimental": {
+    "modelRoles": {
+      "inlineEdit": "Qwen 3 8B (Local)",
+      "applyCodeBlock": "Qwen 3 8B (Local)",
+      "repoMapFileSelection": "Llama 3.2 (Local)"
+    },
+    "contextMenuPrompts": [
+      {
+        "label": "Explain this",
+        "prompt": "Explain the following code in detail:\n{{{selectedText}}}"
+      },
+      {
+        "label": "Optimize this",
+        "prompt": "Optimize the following code for performance and readability:\n{{{selectedText}}}"
+      },
+      {
+        "label": "Add types",
+        "prompt": "Add TypeScript types to the following code:\n{{{selectedText}}}"
+      },
+      {
+        "label": "Document this",
+        "prompt": "Add comprehensive documentation/comments to the following code:\n{{{selectedText}}}"
+      }
+    ]
+  }
 }

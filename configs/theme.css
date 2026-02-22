@@ -1,0 +1,472 @@
+/* ============================================================
+   SOVEREIGN AI — Cyberpunk Pro Theme
+   Clean, professional neon-cyberpunk aesthetic for OpenWebUI
+   Version: 1.0.0 | February 2026
+   ============================================================ */
+
+/* ── Color System ── */
+:root {
+  --cyber-black:    #07080f;
+  --cyber-dark:     #0d0f1a;
+  --cyber-panel:    #111827;
+  --cyber-border:   #1e2d4a;
+  --cyber-cyan:     #00e5ff;
+  --cyber-cyan-dim: #00b4cc;
+  --cyber-magenta:  #f000b8;
+  --cyber-violet:   #8b5cf6;
+  --cyber-green:    #00ff9d;
+  --cyber-amber:    #ffb800;
+  --cyber-red:      #ff3366;
+  --cyber-text:     #ccd9f0;
+  --cyber-muted:    #5a7090;
+  --cyber-white:    #e8f0ff;
+
+  /* Glow effects */
+  --glow-cyan:    0 0 8px #00e5ff60, 0 0 20px #00e5ff30;
+  --glow-magenta: 0 0 8px #f000b860, 0 0 20px #f000b830;
+  --glow-violet:  0 0 8px #8b5cf660, 0 0 20px #8b5cf630;
+  --glow-green:   0 0 8px #00ff9d60, 0 0 20px #00ff9d30;
+}
+
+/* ── Base / Body ── */
+html, body {
+  background-color: var(--cyber-black) !important;
+  color: var(--cyber-text) !important;
+  font-family: 'Inter', 'JetBrains Mono', 'Segoe UI', system-ui, sans-serif !important;
+}
+
+/* ── Scrollbar ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--cyber-cyan-dim) var(--cyber-dark);
+}
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--cyber-dark); }
+::-webkit-scrollbar-thumb {
+  background: var(--cyber-cyan-dim);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--cyber-cyan); }
+
+/* ── Sidebar ── */
+#sidebar, nav[aria-label="sidebar"], .sidebar,
+[data-testid="sidebar"],
+aside {
+  background: var(--cyber-dark) !important;
+  border-right: 1px solid var(--cyber-border) !important;
+}
+
+/* ── Sidebar nav items ── */
+#sidebar a, #sidebar button,
+nav a, nav button {
+  color: var(--cyber-muted) !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+}
+#sidebar a:hover, #sidebar button:hover,
+nav a:hover, nav button:hover {
+  color: var(--cyber-cyan) !important;
+  background: rgba(0, 229, 255, 0.08) !important;
+  box-shadow: var(--glow-cyan) !important;
+}
+#sidebar a.active, #sidebar a[aria-current="page"] {
+  color: var(--cyber-cyan) !important;
+  background: rgba(0, 229, 255, 0.12) !important;
+  border-left: 2px solid var(--cyber-cyan) !important;
+}
+
+/* ── Chat window ── */
+#chat-container, main, .chat-container,
+[role="main"] {
+  background: var(--cyber-black) !important;
+}
+
+/* ── Message bubbles — User ── */
+.message-user, [data-role="user"] .message-content,
+.human-message {
+  background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(0,229,255,0.1)) !important;
+  border: 1px solid rgba(139,92,246,0.4) !important;
+  border-radius: 16px 16px 4px 16px !important;
+  color: var(--cyber-white) !important;
+  box-shadow: 0 2px 12px rgba(139,92,246,0.15) !important;
+}
+
+/* ── Message bubbles — AI ── */
+.message-assistant, [data-role="assistant"] .message-content,
+.ai-message {
+  background: rgba(13, 15, 26, 0.9) !important;
+  border: 1px solid var(--cyber-border) !important;
+  border-radius: 16px 16px 16px 4px !important;
+  color: var(--cyber-text) !important;
+  backdrop-filter: blur(8px) !important;
+}
+
+/* ── Input area ── */
+#chat-input-container, .chat-input-area, footer,
+[data-testid="chat-input-container"] {
+  background: var(--cyber-dark) !important;
+  border-top: 1px solid var(--cyber-border) !important;
+}
+
+textarea, input[type="text"], input[type="search"],
+.chat-input, #prompt-input {
+  background: rgba(7, 8, 15, 0.8) !important;
+  border: 1px solid var(--cyber-border) !important;
+  border-radius: 12px !important;
+  color: var(--cyber-white) !important;
+  transition: border-color 0.2s, box-shadow 0.2s !important;
+  resize: none !important;
+}
+textarea:focus, input[type="text"]:focus, input[type="search"]:focus {
+  border-color: var(--cyber-cyan) !important;
+  box-shadow: var(--glow-cyan) !important;
+  outline: none !important;
+}
+
+/* ── Buttons — Primary ── */
+button[type="submit"], .btn-primary,
+.send-btn, [data-testid="send-button"] {
+  background: linear-gradient(135deg, var(--cyber-cyan), var(--cyber-violet)) !important;
+  border: none !important;
+  border-radius: 10px !important;
+  color: var(--cyber-black) !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  transition: all 0.2s ease !important;
+  box-shadow: var(--glow-cyan) !important;
+}
+button[type="submit"]:hover, .btn-primary:hover,
+.send-btn:hover {
+  box-shadow: 0 0 16px #00e5ff80, 0 0 40px #00e5ff40 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ── Buttons — Secondary / Ghost ── */
+button:not([type="submit"]):not(.btn-primary) {
+  color: var(--cyber-muted) !important;
+  background: transparent !important;
+  border: 1px solid var(--cyber-border) !important;
+  border-radius: 8px !important;
+  transition: all 0.2s ease !important;
+}
+button:not([type="submit"]):not(.btn-primary):hover {
+  color: var(--cyber-cyan) !important;
+  border-color: var(--cyber-cyan) !important;
+  background: rgba(0, 229, 255, 0.06) !important;
+}
+
+/* ── Model selector / dropdowns ── */
+select, .model-selector, [role="combobox"],
+[data-testid="model-selector"] {
+  background: var(--cyber-panel) !important;
+  border: 1px solid var(--cyber-border) !important;
+  border-radius: 10px !important;
+  color: var(--cyber-text) !important;
+}
+select:focus, [role="combobox"]:focus {
+  border-color: var(--cyber-violet) !important;
+  box-shadow: var(--glow-violet) !important;
+}
+
+/* ── Dropdown menus ── */
+[role="menu"], .dropdown-menu, .popover,
+.context-menu {
+  background: var(--cyber-panel) !important;
+  border: 1px solid var(--cyber-border) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(0,229,255,0.1) !important;
+  backdrop-filter: blur(12px) !important;
+}
+[role="menuitem"], .dropdown-item {
+  color: var(--cyber-text) !important;
+  border-radius: 8px !important;
+  transition: all 0.15s ease !important;
+}
+[role="menuitem"]:hover, .dropdown-item:hover {
+  background: rgba(0,229,255,0.08) !important;
+  color: var(--cyber-cyan) !important;
+}
+
+/* ── Modal / Dialog ── */
+[role="dialog"], .modal, .dialog,
+[data-testid="modal"] {
+  background: var(--cyber-panel) !important;
+  border: 1px solid var(--cyber-border) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(139,92,246,0.2) !important;
+}
+
+/* ── Cards ── */
+.card, .panel, [data-testid="card"] {
+  background: var(--cyber-panel) !important;
+  border: 1px solid var(--cyber-border) !important;
+  border-radius: 12px !important;
+  transition: border-color 0.2s, box-shadow 0.2s !important;
+}
+.card:hover, .panel:hover {
+  border-color: rgba(0,229,255,0.3) !important;
+  box-shadow: 0 4px 20px rgba(0,229,255,0.08) !important;
+}
+
+/* ── Code blocks ── */
+pre, code {
+  background: rgba(0,0,0,0.5) !important;
+  border: 1px solid var(--cyber-border) !important;
+  border-radius: 8px !important;
+  color: var(--cyber-green) !important;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace !important;
+}
+pre code { border: none !important; background: transparent !important; }
+
+/* ── Inline code ── */
+p code, li code, td code {
+  background: rgba(0,229,255,0.08) !important;
+  border: 1px solid rgba(0,229,255,0.2) !important;
+  border-radius: 4px !important;
+  color: var(--cyber-cyan) !important;
+  padding: 1px 6px !important;
+}
+
+/* ── Markdown: Headers ── */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--cyber-white) !important;
+  font-weight: 700 !important;
+}
+h1 { color: var(--cyber-cyan) !important; }
+h2 { color: var(--cyber-violet) !important; }
+
+/* ── Markdown: Links ── */
+a {
+  color: var(--cyber-cyan) !important;
+  text-decoration: none !important;
+  transition: color 0.2s, text-shadow 0.2s !important;
+}
+a:hover {
+  color: var(--cyber-white) !important;
+  text-shadow: var(--glow-cyan) !important;
+}
+
+/* ── Markdown: Blockquote ── */
+blockquote {
+  border-left: 3px solid var(--cyber-violet) !important;
+  background: rgba(139,92,246,0.06) !important;
+  border-radius: 0 8px 8px 0 !important;
+  color: var(--cyber-text) !important;
+}
+
+/* ── Markdown: Tables ── */
+table { border-collapse: collapse !important; width: 100% !important; }
+th {
+  background: rgba(0,229,255,0.1) !important;
+  color: var(--cyber-cyan) !important;
+  border: 1px solid var(--cyber-border) !important;
+  padding: 10px 14px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.3px !important;
+}
+td {
+  border: 1px solid var(--cyber-border) !important;
+  padding: 8px 14px !important;
+  color: var(--cyber-text) !important;
+}
+tr:hover td { background: rgba(0,229,255,0.04) !important; }
+tr:nth-child(even) td { background: rgba(13,15,26,0.5) !important; }
+
+/* ── Markdown: HR ── */
+hr {
+  border: none !important;
+  border-top: 1px solid var(--cyber-border) !important;
+  margin: 24px 0 !important;
+}
+
+/* ── Tags / Badges ── */
+.badge, .tag, .chip,
+[data-testid="badge"] {
+  background: rgba(0,229,255,0.1) !important;
+  border: 1px solid rgba(0,229,255,0.3) !important;
+  border-radius: 20px !important;
+  color: var(--cyber-cyan) !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  padding: 2px 10px !important;
+}
+
+/* ── Toggles ── */
+input[type="checkbox"], input[type="radio"] {
+  accent-color: var(--cyber-cyan) !important;
+}
+[role="switch"] {
+  background: var(--cyber-border) !important;
+  transition: background 0.2s !important;
+}
+[role="switch"][aria-checked="true"] {
+  background: var(--cyber-cyan) !important;
+  box-shadow: var(--glow-cyan) !important;
+}
+
+/* ── Sliders / Range ── */
+input[type="range"] {
+  accent-color: var(--cyber-cyan) !important;
+}
+
+/* ── Toast / Notification ── */
+.toast, .notification, [role="alert"] {
+  background: var(--cyber-panel) !important;
+  border: 1px solid var(--cyber-border) !important;
+  border-radius: 12px !important;
+  color: var(--cyber-text) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+}
+.toast-success { border-color: var(--cyber-green) !important; }
+.toast-error   { border-color: var(--cyber-red) !important; }
+.toast-warning { border-color: var(--cyber-amber) !important; }
+
+/* ── Loading / Spinner ── */
+.spinner, .loading, [data-testid="loading"],
+.animate-spin {
+  border-color: var(--cyber-border) !important;
+  border-top-color: var(--cyber-cyan) !important;
+}
+
+/* ── Thinking/reasoning blocks ── */
+.think, details, summary {
+  background: rgba(139,92,246,0.05) !important;
+  border: 1px solid rgba(139,92,246,0.2) !important;
+  border-radius: 10px !important;
+  color: var(--cyber-muted) !important;
+}
+details summary {
+  color: var(--cyber-violet) !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+}
+
+/* ── Top navbar / header ── */
+header, .navbar, .topbar, nav[aria-label="global"] {
+  background: var(--cyber-dark) !important;
+  border-bottom: 1px solid var(--cyber-border) !important;
+}
+
+/* ── Placeholder text ── */
+::placeholder { color: var(--cyber-muted) !important; opacity: 0.6 !important; }
+
+/* ── Selection highlight ── */
+::selection {
+  background: rgba(0,229,255,0.25) !important;
+  color: var(--cyber-white) !important;
+}
+
+/* ── Workspace / workspace cards ── */
+.workspace-card, .model-card {
+  background: var(--cyber-panel) !important;
+  border: 1px solid var(--cyber-border) !important;
+  border-radius: 14px !important;
+  transition: all 0.2s ease !important;
+}
+.workspace-card:hover, .model-card:hover {
+  border-color: var(--cyber-cyan) !important;
+  box-shadow: var(--glow-cyan) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* ── Settings panels ── */
+.settings-panel, .settings-page,
+[data-testid="settings"] {
+  background: var(--cyber-dark) !important;
+}
+.settings-section {
+  background: var(--cyber-panel) !important;
+  border: 1px solid var(--cyber-border) !important;
+  border-radius: 12px !important;
+}
+
+/* ── Tool call display ── */
+.tool-call, .function-call, [data-type="tool"] {
+  background: rgba(0,255,157,0.04) !important;
+  border: 1px solid rgba(0,255,157,0.2) !important;
+  border-radius: 10px !important;
+  border-left: 3px solid var(--cyber-green) !important;
+}
+
+/* ── RAG / file attachment indicators ── */
+.file-pill, .attachment, [data-type="file"] {
+  background: rgba(255,184,0,0.08) !important;
+  border: 1px solid rgba(255,184,0,0.3) !important;
+  border-radius: 8px !important;
+  color: var(--cyber-amber) !important;
+}
+
+/* ── Subtle scanline texture (very light, pro not retro) ── */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.015) 2px,
+    rgba(0,0,0,0.015) 4px
+  );
+}
+
+/* ── Accent border on active/focused containers ── */
+.focused, :focus-within > .input-wrapper {
+  border-color: var(--cyber-cyan) !important;
+}
+
+/* ── Status indicators ── */
+.status-online  { color: var(--cyber-green) !important; }
+.status-busy    { color: var(--cyber-amber) !important; }
+.status-offline { color: var(--cyber-muted) !important; }
+.status-error   { color: var(--cyber-red) !important; }
+
+/* ── Copy button on code blocks ── */
+.copy-code-button, button[aria-label*="copy"], button[aria-label*="Copy"] {
+  background: rgba(0,229,255,0.1) !important;
+  border: 1px solid rgba(0,229,255,0.3) !important;
+  border-radius: 6px !important;
+  color: var(--cyber-cyan) !important;
+}
+.copy-code-button:hover {
+  background: rgba(0,229,255,0.2) !important;
+  box-shadow: var(--glow-cyan) !important;
+}
+
+/* ── Sidebar new chat button ── */
+a[href="/"], a[href*="new"], button[aria-label*="New"],
+button[aria-label*="new"] {
+  background: linear-gradient(135deg, rgba(0,229,255,0.15), rgba(139,92,246,0.15)) !important;
+  border: 1px solid rgba(0,229,255,0.3) !important;
+  border-radius: 10px !important;
+  color: var(--cyber-cyan) !important;
+  font-weight: 600 !important;
+}
+a[href="/"]:hover, button[aria-label*="New"]:hover {
+  box-shadow: var(--glow-cyan) !important;
+  border-color: var(--cyber-cyan) !important;
+}
+
+/* ── Logo / Branding area ── */
+.logo, .brand, [data-testid="logo"] {
+  color: var(--cyber-cyan) !important;
+  text-shadow: var(--glow-cyan) !important;
+}
+
+/* ── Typography tweaks ── */
+p, li, span { color: inherit !important; }
+strong, b   { color: var(--cyber-white) !important; font-weight: 700 !important; }
+em, i       { color: var(--cyber-violet) !important; font-style: italic !important; }
+
+/* ── Syntax highlighting adjustments ── */
+.hljs-keyword, .token.keyword   { color: #ff79c6 !important; }
+.hljs-string,  .token.string    { color: #00ff9d !important; }
+.hljs-comment, .token.comment   { color: #5a7090 !important; font-style: italic !important; }
+.hljs-number,  .token.number    { color: var(--cyber-amber) !important; }
+.hljs-function,.token.function  { color: var(--cyber-cyan) !important; }
+.hljs-class,   .token.class-name{ color: var(--cyber-violet) !important; }
+.hljs-variable,.token.variable  { color: #bd93f9 !important; }
+.hljs-attr,    .token.attr-name { color: var(--cyber-cyan-dim) !important; }
