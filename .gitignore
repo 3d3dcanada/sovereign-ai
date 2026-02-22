@@ -4,11 +4,12 @@
 logs/*.log
 
 # Data volumes - ignore runtime files but keep directory structure
-data/*.pdf
-data/*.txt
-data/*.md
-data/*.db
-data/*.sqlite
+data/**/*.pdf
+data/**/*.txt
+data/**/*.md
+data/**/*.db
+data/**/*.sqlite
+data/**/.*
 
 # Python
 __pycache__/
