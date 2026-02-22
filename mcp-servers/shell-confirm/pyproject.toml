@@ -1,0 +1,16 @@
+[project]
+name = "shell-confirm"
+version = "1.0.0"
+description = "MCP server for shell command execution with safety tiers and confirmation"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "mcp>=1.0.0",
+]
+
+[project.scripts]
+shell-confirm = "server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
