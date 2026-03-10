@@ -2,6 +2,8 @@
 
 # Logs
 logs/*.log
+logs/inactivity-monitor.pid
+logs/.last-activity
 
 # Data volumes - ignore runtime files but keep directory structure
 data/**/*.pdf

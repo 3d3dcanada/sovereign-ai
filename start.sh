@@ -14,6 +14,24 @@ echo -e "${CYAN}  Sovereign AI - Starting...${NC}"
 echo -e "${CYAN}========================================${NC}"
 echo ""
 
+# 0. Validate .env exists and required secrets are set
+if [ ! -f "$DIR/.env" ]; then
+    echo -e "${RED}[!!]${NC} .env file missing."
+    echo "    Run: cp .env.example .env && chmod 600 .env"
+    echo "    Then set WEBUI_SECRET_KEY and NOTEBOOK_SECRET_KEY with:"
+    echo "    openssl rand -base64 32"
+    exit 1
+fi
+# Source and validate required vars
+set -a; source "$DIR/.env"; set +a
+for var in WEBUI_SECRET_KEY NOTEBOOK_SECRET_KEY; do
+    if [ -z "${!var}" ]; then
+        echo -e "${RED}[!!]${NC} $var is empty in .env — set it before starting."
+        exit 1
+    fi
+done
+echo -e "${GREEN}[OK]${NC} .env validated"
+
 # 1. Ensure Ollama is running
 if systemctl is-active --quiet ollama; then
     echo -e "${GREEN}[OK]${NC} Ollama service running"
@@ -44,19 +62,29 @@ done
 # 3. Start Docker stack
 echo -e "${YELLOW}[..]${NC} Starting Docker services..."
 cd "$DIR"
-docker compose up -d 2>&1 | grep -v "^$"
+if ! docker compose up -d; then
+    echo -e "${RED}[!!]${NC} Docker stack failed to start"
+    exit 1
+fi
 echo ""
 
 # 4. Wait for OpenWebUI health
 echo -n "  Waiting for OpenWebUI..."
+OPENWEBUI_READY=0
 for i in $(seq 1 30); do
     if curl -s http://localhost:3000 > /dev/null 2>&1; then
         echo -e " ${GREEN}ready${NC}"
+        OPENWEBUI_READY=1
         break
     fi
     echo -n "."
     sleep 2
 done
+if [ "$OPENWEBUI_READY" -ne 1 ]; then
+    echo ""
+    echo -e "${RED}[!!]${NC} OpenWebUI did not become ready"
+    exit 1
+fi
 
 # 5. Start inactivity monitor (auto-shutdown after 10 min)
 echo -e "${YELLOW}[..]${NC} Starting inactivity monitor..."

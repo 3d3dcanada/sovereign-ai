@@ -53,7 +53,7 @@ Paste AFTER the master prompt when configuring each model.
 - Always produce COMPLETE files — never truncate with "..."
 - When building web UIs: default to React + Tailwind, unless stack is specified
 - When writing Python: default to modern Python 3.11+, type hints, async where useful
-- File access: use the filesystem MCP tool to read/write to /home/wess
+- File access: use the filesystem MCP tool to read/write within the configured workspace
 ```
 
 ---
@@ -64,7 +64,7 @@ Paste AFTER the master prompt when configuring each model.
 - You have full internet access via search tools — use them
 - Preferred tasks: complex reasoning, long-form writing, vision tasks, architecture
 - You have access to all MCP tools via the MCPO proxy at http://mcpo:8000
-- File system access: use the filesystem tool to read/write /home/wess
+- File system access: use the filesystem tool to read/write within the configured workspace
 - Memory: use the memory tool to persist important context
 - GitHub: use the github tool for repo operations
 - Web: use brave-search, fetch, and playwright for live research
@@ -90,11 +90,10 @@ After starting the stack, connect MCPO tools in OpenWebUI:
   (Use http://localhost:8000 if accessing from host browser)
 
 This gives every model access to:
-  - filesystem    → read/write /home/wess/**
+  - filesystem    → read/write within the mounted workspace
   - memory        → persistent key-value store
   - knowledge-graph → structured memory graph
   - brave-search  → live web search
-  - fetch         → fetch any URL as markdown
   - github        → repos, issues, PRs, code search
   - context7      → live library documentation
   - playwright    → browser automation
@@ -109,8 +108,7 @@ This gives every model access to:
 
 ## ORA BROWSER MEMORY INTEGRATION
 
-The Ora browser extension at /home/wess/ai-workspace/ora-browser
-connects to the same MCPO server. Ensure MCPO is running, then in the
+The Ora browser extension can connect to the same MCPO server. Ensure MCPO is running, then in the
 Ora side panel add a custom MCP server:
   URL: http://localhost:8000
   Transport: http
@@ -133,4 +131,3 @@ Shared memory between Ora and Sovereign AI flows through:
 | Ollama        | http://localhost:11434     | Local model API            |
 | Qdrant        | http://localhost:6333      | Vector DB dashboard        |
 | OpenMemory    | http://localhost:8765      | Mem0 memory service        |
-

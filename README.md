@@ -1,6 +1,6 @@
 # Sovereign AI - Local AI Workstation
 
-**Version 2.0.0** | February 2026
+**Version 2.1.0** | March 2026
 
 A fully-featured, self-hosted AI workstation with autonomous agent capabilities, MCP server integration, and multi-provider API support.
 
@@ -10,14 +10,14 @@ A fully-featured, self-hosted AI workstation with autonomous agent capabilities,
 
 ```bash
 # 1. Navigate to project directory
-cd /home/wess/sovereign-ai
+cd /path/to/sovereign-ai
 
 # 2. Copy and configure environment variables
 cp .env.example .env
-# Edit .env with your API keys
+# Edit .env with your API keys and host work directory
 
 # 3. Start all services
-./scripts/start.sh
+./start.sh
 ```
 
 **Access OpenWebUI:** http://localhost:3000
@@ -29,7 +29,7 @@ cp .env.example .env
 | Service | Port | Description |
 |---------|------|-------------|
 | **OpenWebUI** | 3000 | Main AI interface |
-| **Ollama** | 11434 | Local LLM inference |
+| **Ollama** | 11434 | Host-local LLM inference |
 | **MCPO** | 8000 | MCP OpenAPI Proxy |
 | **Mem0** | 8765 | Memory service with Qdrant |
 | **Open Notebook** | 8502 | Research notebook |
@@ -40,7 +40,7 @@ cp .env.example .env
 
 ## 🤖 Local Models
 
-Pre-configured models (auto-pulled on first start):
+Expected local models:
 
 - `deepseek-r1:8b` - Reasoning model
 - `qwen3:8b` - General purpose
@@ -63,7 +63,6 @@ Pre-configured models (auto-pulled on first start):
 | `puppeteer` | Alternative browser |
 | `sequential-thinking` | Complex reasoning |
 | `sqlite` | Database operations |
-| `fetch` | HTTP requests |
 
 ### Custom Servers
 | Server | Purpose |
@@ -189,6 +188,9 @@ sovereign-ai/
 Key variables in `.env`:
 
 ```bash
+# Core
+HOST_WORK_DIR=.
+
 # Search
 BRAVE_API_KEY=your-key
 

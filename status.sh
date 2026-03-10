@@ -27,13 +27,21 @@ check() {
     fi
 }
 
+check_redis() {
+    if docker ps --format "{{.Names}}" | grep -qx "redis" && docker exec redis redis-cli ping >/dev/null 2>&1; then
+        echo -e "  ${GREEN}[OK]${NC} Redis (port 6379)"
+    else
+        echo -e "  ${RED}[--]${NC} Redis (port 6379)"
+    fi
+}
+
 check "Ollama"        "http://localhost:11434/api/tags" "11434"
-check "OpenWebUI"     "http://localhost:3000"           "3000"
+check "OpenWebUI"     "http://localhost:3000/health"    "3000"
 check "Open Notebook" "http://localhost:8502"           "8502"
-check "MCP Proxy"     "http://localhost:8000"           "8000"
-check "Mem0"          "http://localhost:8765"           "8765"
-check "Qdrant"        "http://localhost:6333"           "6333"
-check "Redis"         "http://localhost:6379"           "6379"
+check "MCP Proxy"     "http://localhost:8000/health"    "8000"
+check "Mem0"          "http://localhost:8765/health"    "8765"
+check "Qdrant"        "http://localhost:6333/health"    "6333"
+check_redis
 check "ComfyUI"       "http://localhost:8188"           "8188"
 echo ""
 

@@ -184,7 +184,7 @@
     {
       "type": "docs",
       "name": "Sovereign AI Docs",
-      "startUrl": "file:///home/wess/sovereign-ai/docs",
+      "startUrl": "file://${HOME}/sovereign-ai/docs",
       "depth": 3
     }
   ],
@@ -194,7 +194,7 @@
       "transport": {
         "type": "stdio",
         "command": "npx",
-        "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/wess"]
+        "args": ["-y", "@modelcontextprotocol/server-filesystem", "${HOME}"]
       }
     },
     {
@@ -213,7 +213,7 @@
       "transport": {
         "type": "stdio",
         "command": "npx",
-        "args": ["-y", "@github/mcp-server"]
+        "args": ["-y", "@modelcontextprotocol/server-github"]
       },
       "env": {
         "GITHUB_TOKEN": "${GITHUB_TOKEN}"

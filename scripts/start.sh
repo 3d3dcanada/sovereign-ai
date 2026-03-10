@@ -22,17 +22,21 @@ echo -e "${BLUE}║                    Version 2.0.0                            
 echo -e "${BLUE}╚══════════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
-# Check for .env file
+# Validate .env exists and required secrets are set
 if [ ! -f ".env" ]; then
-    echo -e "${YELLOW}⚠ No .env file found. Creating from template...${NC}"
-    cp .env.example .env
-    echo -e "${YELLOW}  Please edit .env with your API keys.${NC}"
+    echo -e "${RED}✗ .env file missing.${NC}"
+    echo "  Run: cp .env.example .env && chmod 600 .env"
+    echo "  Then generate secrets: openssl rand -base64 32"
+    exit 1
 fi
-
-# Load environment variables
-if [ -f ".env" ]; then
-    export $(cat .env | grep -v '^#' | xargs)
-fi
+set -a; source .env; set +a
+for var in WEBUI_SECRET_KEY NOTEBOOK_SECRET_KEY; do
+    if [ -z "${!var}" ]; then
+        echo -e "${RED}✗ $var is not set in .env${NC}"
+        exit 1
+    fi
+done
+echo -e "${GREEN}✓ .env validated${NC}"
 
 # Function to check if a port is in use
 check_port() {

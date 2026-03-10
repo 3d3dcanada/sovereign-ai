@@ -9,7 +9,7 @@ RUN pip install mcp pydantic
 COPY agent.py /app/agent.py
 
 # Create directories
-RUN mkdir -p /app/logs /home/wess
+RUN mkdir -p /app/logs /workspace
 
 EXPOSE 8501
 

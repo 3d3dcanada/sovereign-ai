@@ -2,7 +2,7 @@
   "mcpServers": {
     "filesystem": {
       "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/home/wess"],
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/workspace"],
       "env": {}
     },
     "memory": {
@@ -25,11 +25,6 @@
       "args": ["mcp-server-time"],
       "env": {}
     },
-    "fetch": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-fetch"],
-      "env": {}
-    },
     "sequential-thinking": {
       "command": "npx",
       "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
@@ -44,7 +39,7 @@
     },
     "github": {
       "command": "npx",
-      "args": ["-y", "@github/mcp-server"],
+      "args": ["-y", "@modelcontextprotocol/server-github"],
       "env": {
         "GITHUB_TOKEN": "${GITHUB_TOKEN}"
       }
@@ -81,7 +76,7 @@
       "args": ["/app/mcp-servers/sovereign-agent/agent.py"],
       "env": {
         "LOG_DIR": "/app/logs",
-        "WORK_DIR": "/home/wess"
+        "WORK_DIR": "/workspace"
       }
     },
     "system-monitor": {
@@ -110,9 +105,9 @@
     "host": "0.0.0.0",
     "port": 8000,
     "cors": {
-      "origins": ["*"],
-      "methods": ["*"],
-      "headers": ["*"]
+      "origins": ["http://localhost:3000", "http://localhost:8502", "http://localhost:8765"],
+      "methods": ["GET", "POST"],
+      "headers": ["Content-Type", "Authorization"]
     }
   }
 }

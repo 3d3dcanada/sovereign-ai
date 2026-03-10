@@ -4,6 +4,7 @@ Version: 2.0.0
 Description: Control system operations with safety checks.
 """
 
+from pathlib import Path
 from pydantic import BaseModel, Field
 from typing import Optional
 import subprocess
@@ -12,12 +13,17 @@ import json
 import shutil
 
 
+def _default_log_path() -> str:
+    repo_root = Path(__file__).resolve().parents[2]
+    return str(repo_root / "logs" / "audit" / "system-commands.jsonl")
+
+
 class Tools:
     class Valves(BaseModel):
         allow_dangerous_commands: bool = Field(default=False)
         require_confirmation: bool = Field(default=True)
         log_commands: bool = Field(default=True)
-        log_path: str = Field(default="/home/wess/sovereign-ai/logs/audit/system-commands.jsonl")
+        log_path: str = Field(default_factory=_default_log_path)
     
     def __init__(self):
         self.valves = self.Valves()

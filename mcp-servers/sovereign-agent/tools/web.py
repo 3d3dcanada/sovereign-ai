@@ -26,7 +26,7 @@ class WebTool(BaseTool):
     def description(self) -> str:
         return "Search the web and fetch URLs"
     
-    def __init__(self, work_dir: str = "/home/wess", log_dir: str = None,
+    def __init__(self, work_dir: Optional[str] = None, log_dir: str = None,
                  brave_api_key: str = None):
         super().__init__(work_dir, log_dir)
         self.brave_api_key = brave_api_key or os.environ.get("BRAVE_API_KEY", "")

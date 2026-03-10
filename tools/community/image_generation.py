@@ -7,12 +7,18 @@ Supports: OpenAI DALL-E, Stability AI, and local models.
 """
 
 from pydantic import BaseModel, Field
+from pathlib import Path
 from typing import Optional
 import os
 import json
 import base64
 import urllib.request
 import urllib.error
+
+
+def _default_save_path() -> str:
+    repo_root = Path(__file__).resolve().parents[2]
+    return str(repo_root / "data" / "images")
 
 
 class Tools:
@@ -38,7 +44,7 @@ class Tools:
             description="Default style for DALL-E: vivid or natural"
         )
         save_path: str = Field(
-            default="/home/wess/sovereign-ai/data/images",
+            default_factory=_default_save_path,
             description="Path to save generated images"
         )
     

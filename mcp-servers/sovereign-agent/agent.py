@@ -222,11 +222,15 @@ pending_confirmations: Dict[str, Dict] = {}
 # TOOL EXECUTORS
 # ============================================
 
+def _default_work_dir() -> str:
+    return os.environ.get("WORK_DIR") or os.path.expanduser("~")
+
+
 class ToolExecutor:
     """Executes various tools with safety checks."""
     
-    def __init__(self, work_dir: str = "/home/wess"):
-        self.work_dir = work_dir
+    def __init__(self, work_dir: Optional[str] = None):
+        self.work_dir = work_dir or _default_work_dir()
         self.log_dir = os.environ.get("LOG_DIR", "/app/logs")
         os.makedirs(self.log_dir, exist_ok=True)
     

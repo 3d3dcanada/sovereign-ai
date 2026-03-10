@@ -31,7 +31,7 @@ Or browse: https://openwebui.com/tools
 ## MCP Tools (Automatic via MCPO)
 
 These are already configured via docker-compose + mcpo:
-- **Filesystem** — Read/write/search files in /home/wess
+- **Filesystem** — Read/write/search files in the mounted workspace
 - **Memory** — Persistent key-value store across chats
 - **Time** — Current time and timezone operations
 

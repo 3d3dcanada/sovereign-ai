@@ -23,7 +23,7 @@ class MemoryTool(BaseTool):
     def description(self) -> str:
         return "Store and retrieve information from agent memory"
     
-    def __init__(self, work_dir: str = "/home/wess", log_dir: str = None,
+    def __init__(self, work_dir: Optional[str] = None, log_dir: str = None,
                  memory_file: str = None):
         super().__init__(work_dir, log_dir)
         self.memory_file = memory_file or os.path.join(

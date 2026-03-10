@@ -9,6 +9,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
 from datetime import datetime
+import os
 
 
 @dataclass
@@ -47,7 +48,7 @@ class BaseTool(ABC):
     - execute: The main execution method
     """
     
-    def __init__(self, work_dir: str = "/home/wess", log_dir: str = None):
+    def __init__(self, work_dir: Optional[str] = None, log_dir: str = None):
         """
         Initialize the tool.
         
@@ -55,7 +56,7 @@ class BaseTool(ABC):
             work_dir: Working directory for operations
             log_dir: Directory for logs
         """
-        self.work_dir = work_dir
+        self.work_dir = work_dir or os.environ.get("WORK_DIR") or os.path.expanduser("~")
         self.log_dir = log_dir or "/app/logs"
     
     @property
